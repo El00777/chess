@@ -1,95 +1,70 @@
-
-
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
+import javax.swing.JPanel;
 
-import javax.swing.*;
-
-
-//Please read the following class carefully! It represents a single chess board square and is what you'll be using
-//to represent the chessboard.
-@SuppressWarnings("serial")
-public class Square extends JComponent {
-	//a reference back to the board that stores this square.
-    private Board b;
-    
-    //true for white, false for black.
-    private final boolean color;
-    //if there's a piece on the square this stores it. If there isn't this stores null.
-    private Piece occupyingPiece;
-    
-    //if desired you can use this to retain the piece where it is but make it invisible to the user. 
-    //True means to display the piece. This property will be switched to false when we are dragging a piece around while choosing our next move.
-    private boolean dispPiece;
-    
-    //the coordinates of the square.
-    private int row;
-    private int col;
-    
-    
-    public Square(Board b, boolean isWhite, int row, int col) {
-        
-        this.b = b;
-        this.color = isWhite;
-        this.dispPiece = true;
+public class Square extends JPanel {
+    private Piece piece;
+    private final boolean isWhite;  // This variable is now USED
+    private final int row;
+    private final int col;
+    private final Board board;                              
+                            
+    public Square(Board board, boolean isWhite, int row, int col) {
+        this.board = board;
+        this.isWhite = isWhite;//  Now used
         this.row = row;
         this.col = col;
-        
-        
-        this.setBorder(BorderFactory.createEmptyBorder());
+        this.piece = null;
     }
+    //  Override paintComponent to use `isWhite` for rendering colors
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
     
-    public boolean getColor() {
-        return this.color;
-    }
+        // Standard chessboard colors
+        Color lightColor = new Color(240, 217, 181);  // Light beige color
+        Color darkColor = new Color(181, 136, 99);    // Brown wood color
     
-    public Piece getOccupyingPiece() {
-        return occupyingPiece;
-    }
+        // Set color based on `isWhite`
+        g.setColor(isWhite ? lightColor : darkColor);
     
-    public boolean isOccupied() {
-        return (this.occupyingPiece != null);
-    }
+        // Fill the square
+        g.fillRect(0, 0, getWidth(), getHeight());
     
-    public int getRow() {
-        return this.row;
-    }
     
-    public int getCol() {
-        return this.col;
-    }
     
-    public void setDisplay(boolean v) {
-        this.dispPiece = v;
-    }
-    
-    public void put(Piece p) {
-        this.occupyingPiece = p;
-    }
-    
-    public Piece removePiece() {
-        Piece p = this.occupyingPiece;
-        this.occupyingPiece = null;
-        return p;
+        if(piece!= null){
+            piece.draw(g, this);
+        }
     }
 
-    
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        
-        if (this.color) {
-            g.setColor(new Color(221,192,127));
-        } else {
-            g.setColor(new Color(101,67,33));
-        }
-        
-        g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
-        
-        if(occupyingPiece != null && dispPiece) {
-            occupyingPiece.draw(g, this);
-        }
+    public void setPiece(Piece p) {
+        this.piece = p;
+        repaint();  // Refresh UI when piece is placed
     }
-    
-    
+
+    public void removePiece() {
+        this.piece = null;
+        repaint();
+    }
+
+    public Piece getPiece() {
+        return this.piece;
+    }
+
+    public boolean isOccupied() {
+        return piece != null;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public boolean isWhite() {  //  Provide a getter if needed
+        return isWhite;
+    }
 }
