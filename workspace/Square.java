@@ -1,59 +1,15 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
 
 public class Square extends JPanel {
+    private int row, col;
     private Piece piece;
-    private final boolean isWhite;  // This variable is now USED
-    private final int row;
-    private final int col;
-    private final Board board;                              
-                            
-    public Square(Board board, boolean isWhite, int row, int col) {
-        this.board = board;
-        this.isWhite = isWhite;//  Now used
+
+    public Square(int row, int col) {
         this.row = row;
         this.col = col;
-        this.piece = null;
-    }
-    //  Override paintComponent to use `isWhite` for rendering colors
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-    
-        // Standard chessboard colors
-        Color lightColor = new Color(240, 217, 181);  // Light beige color
-        Color darkColor = new Color(181, 136, 99);    // Brown wood color
-    
-        // Set color based on `isWhite`
-        g.setColor(isWhite ? lightColor : darkColor);
-    
-        // Fill the square
-        g.fillRect(0, 0, getWidth(), getHeight());
-    
-    
-    
-        if(piece!= null){
-            piece.draw(g, this);
-        }
-    }
-
-    public void setPiece(Piece p) {
-        this.piece = p;
-        repaint();  // Refresh UI when piece is placed
-    }
-
-    public void removePiece() {
-        this.piece = null;
-        repaint();
-    }
-
-    public Piece getPiece() {
-        return this.piece;
-    }
-
-    public boolean isOccupied() {
-        return piece != null;
+        this.setPreferredSize(new Dimension(80, 80));  // Adjust size as needed
+        this.setBackground((row + col) % 2 == 0 ? Color.WHITE : Color.GRAY);
     }
 
     public int getRow() {
@@ -64,7 +20,24 @@ public class Square extends JPanel {
         return col;
     }
 
-    public boolean isWhite() {  //  Provide a getter if needed
-        return isWhite;
+    public Piece getPiece() {
+        return piece;
+    }
+
+    public void setPiece(Piece piece) {
+        this.piece = piece;
+        repaint();
+    }
+
+    public boolean isOccupied() {
+        return piece != null;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (piece != null) {
+            piece.draw(g, this);
+        }
     }
 }
